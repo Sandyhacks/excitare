@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.iyers_000.excitarehackumass" >
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +20,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.example.iyers_000.excitarehackumass.BuzzTheAlarm"
+            android:name=".BuzzTheAlarm"
             android:enabled="true" />
 
     </application>

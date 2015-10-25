@@ -3,18 +3,16 @@ package com.example.iyers_000.excitarehackumass;
 import android.app.IntentService;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,7 +21,7 @@ public class BuzzTheAlarm extends IntentService {
     public BuzzTheAlarm(){
 
         super("BuzzTheAlarm");
-        Log.d("pp","oo");
+        Log.d("pp", "oo");
     }
 
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -31,13 +29,28 @@ public class BuzzTheAlarm extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //Toast.makeText(this, "yo", Toast.LENGTH_SHORT).show();
-        Log.v("BuzzTheAlarm", "running buzz the alarm");
+        Bundle extras = intent.getExtras();
+        String jsonAlarmStatus,temp;
+        if (extras == null){
+            Log.e("BTA", "extras empty");
+            return;
+        }
+
+            jsonAlarmStatus = (String)extras.get("alarmStatus");//.toString();
+        if(jsonAlarmStatus==null){
+            Log.e("BTA", "json empty");
+            return;
+        }
+
+        Log.v("BuzzTheAlarm", "running buzz the alarm "+jsonAlarmStatus);
 
         if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
+            Log.e("BT", "Device does not support bluetooth");
+            return;
         }
         if (!mBluetoothAdapter.isEnabled()) {
-            //start bluetooth
+            Log.e("BT", "Bluetooth is not ON");
+            return;
         }
 
         BluetoothDevice device = null;// = mBluetoothAdapter.getRemoteDevice(address);
@@ -52,14 +65,11 @@ public class BuzzTheAlarm extends IntentService {
                     AcceptThread acceptThread = new AcceptThread();
                     acceptThread.run();
                     return;
-
                 }
-
                 else */
                 if(device.getName().equalsIgnoreCase("WakeUp"))
-                {
                     break;
-                }
+
             }
         }
         Log.v("BuzzTheAlarm", device.getName());
@@ -103,7 +113,7 @@ public class BuzzTheAlarm extends IntentService {
             try {
                 ConnectedThread connectedThread = new ConnectedThread(socket);
                 //  connectedThread.start();
-                connectedThread.sendData();
+                connectedThread.sendData(jsonAlarmStatus);
                 socket.close();
             } catch (IOException qe) {
                 qe.printStackTrace();
@@ -170,8 +180,8 @@ class ConnectedThread extends Thread {
         }
     }
 
-    public void sendData() throws IOException {
-        write("Hello".getBytes());
+    public void sendData(String text) throws IOException {
+        write(text.getBytes());
 
     }
 }
