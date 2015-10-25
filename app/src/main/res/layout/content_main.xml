@@ -22,7 +22,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="62dp"
-        android:background="#0f7918" />
+        android:background="#0f7918"
+        android:onClick = "doTheMagic"/>
 
     <TimePicker
         android:layout_width="wrap_content"

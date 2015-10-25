@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Log.v("MainActivity", "calling do the magic");
-        doTheMagic();
+     //   doTheMagic();
     }
 
     @Override
@@ -68,18 +69,32 @@ public class MainActivity extends AppCompatActivity {
      * starts all the processing
      * set an alarm and attach intent to it
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public void doTheMagic()
+    @TargetApi(Build.VERSION_CODES.M)
+    public void doTheMagic(View view)
     {
         Intent msgIntent = new Intent(this, BuzzTheAlarm.class);
-        PendingIntent pIntent= PendingIntent.getActivity(this, 0, msgIntent, 0);
+        PendingIntent pIntent= PendingIntent.getService(this, 0, msgIntent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+     //   alarmManager.cancel(pIntent);
         Calendar cal = new GregorianCalendar();
+        TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+        int hour = 0;
+        int min = 0;
 
-        cal.set(Calendar.HOUR_OF_DAY, Integer.valueOf("11"));
-        cal.set(Calendar.MINUTE, Integer.valueOf("34"));
+        int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentApiVersion > android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+            hour = timePicker.getHour();
+            min = timePicker.getMinute();
+        } else {
+            hour = timePicker.getCurrentHour();
+            min = timePicker.getCurrentMinute();
+        }
+        Log.e("Time",hour+" "+min);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+
+        cal.set(Calendar.MINUTE, min);
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pIntent);
-        Toast.makeText(this, "Vola! Time to go to bed", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "Vola! Time to go to bed", Toast.LENGTH_SHORT).show();
         Log.v("Set Alarm", "done with alarmManager");
     }
 }

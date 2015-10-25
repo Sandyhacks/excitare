@@ -1,17 +1,14 @@
 package com.example.iyers_000.excitarehackumass;
 
+import android.app.IntentService;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,24 +18,19 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 
-public class BuzzTheAlarm extends AppCompatActivity {
+public class BuzzTheAlarm extends IntentService {
+
+    public BuzzTheAlarm(){
+
+        super("BuzzTheAlarm");
+        Log.d("pp","oo");
+    }
 
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_buzz_the_alarm);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        //Toast.makeText(this, "yo", Toast.LENGTH_SHORT).show();
         Log.v("BuzzTheAlarm", "running buzz the alarm");
 
         if (mBluetoothAdapter == null) {
@@ -47,12 +39,7 @@ public class BuzzTheAlarm extends AppCompatActivity {
         if (!mBluetoothAdapter.isEnabled()) {
             //start bluetooth
         }
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        String address = "64:89:9A:EA:70:35";
         BluetoothDevice device = null;// = mBluetoothAdapter.getRemoteDevice(address);
 
         Set<BluetoothDevice> mPairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -60,7 +47,7 @@ public class BuzzTheAlarm extends AppCompatActivity {
             for (BluetoothDevice mDevice : mPairedDevices) {
                 device = mBluetoothAdapter.getRemoteDevice(mDevice.getAddress());
 
-                if (device.getName().equalsIgnoreCase("g2") )
+              /*  if (device.getName().equalsIgnoreCase("WqwqwUp") )
                 {
                     AcceptThread acceptThread = new AcceptThread();
                     acceptThread.run();
@@ -68,7 +55,8 @@ public class BuzzTheAlarm extends AppCompatActivity {
 
                 }
 
-                else if(device.getName().equalsIgnoreCase("xt1033"))
+                else */
+                if(device.getName().equalsIgnoreCase("WakeUp"))
                 {
                     break;
                 }
@@ -111,18 +99,23 @@ public class BuzzTheAlarm extends AppCompatActivity {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-            socket = tmp;
+            // socket = tmp;
             try {
                 ConnectedThread connectedThread = new ConnectedThread(socket);
-                connectedThread.start();
-              //  connectedThread.sendData();
+                //  connectedThread.start();
+                connectedThread.sendData();
+                socket.close();
             } catch (IOException qe) {
                 qe.printStackTrace();
             }
 
         }
 
-    }}
+    }
+
+}
+
+
 class ConnectedThread extends Thread {
     public  BluetoothSocket mmSocket=null;
     public  InputStream mmInStream=null;
@@ -179,9 +172,10 @@ class ConnectedThread extends Thread {
 
     public void sendData() throws IOException {
         write("Hello".getBytes());
+
     }
 }
-
+/*
  class AcceptThread extends Thread {
     private final BluetoothServerSocket mmServerSocket;
      BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -222,9 +216,9 @@ class ConnectedThread extends Thread {
     }
 
     /** Will cancel the listening socket, and cause the thread to finish */
-    public void cancel() {
+   /* public void cancel() {
         try {
             mmServerSocket.close();
         } catch (IOException e) { }
     }
-}
+}*/
